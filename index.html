@@ -35,7 +35,14 @@
 *{ box-sizing: border-box; }
 
 body{
-  background: var(--floor);
+  /* a lit room rather than a flat panel: gold from the window side, cold steel opposite */
+  background:
+    radial-gradient(128% 78% at 6% -12%, rgba(201,161,75,0.11), transparent 58%),
+    radial-gradient(96% 68% at 102% 6%,  rgba(44,95,168,0.09),  transparent 62%),
+    radial-gradient(78% 56% at 52% 112%, rgba(201,161,75,0.055), transparent 60%),
+    var(--floor);
+  background-attachment: fixed;
+  background-color: var(--floor);
   color: var(--chalk);
   font-family: var(--font);
   font-variation-settings: 'wdth' 100, 'wght' 400;
@@ -53,6 +60,16 @@ body{
   opacity: 0.05;
   pointer-events: none;
   z-index: 90;
+}
+
+/* chalk hanging in the light; scrolling stirs it */
+#dust{ position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+main, footer{ position:relative; z-index:1; }
+
+#progress{
+  position:fixed; top: env(safe-area-inset-top, 0px); left:0;
+  height:2px; width:0; z-index:60; pointer-events:none;
+  background: linear-gradient(90deg, var(--gold), #EBC877);
 }
 
 .wrap{ width:100%; max-width:1120px; margin-inline:auto; padding-inline:20px; }
@@ -77,9 +94,12 @@ a{ color: var(--chalk); }
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--rule);
 }
-.bar-top .wrap{ display:flex; align-items:center; gap:14px; padding-block:9px; }
+.bar-top .wrap{ display:flex; align-items:center; gap:14px; padding-block:9px; transition: padding-block .24s ease; }
+.bar-top.tight .wrap{ padding-block:5px; }
+.bar-top.tight{ background: rgba(18,20,24,0.94); }
 .brand{ display:flex; align-items:center; gap:11px; min-width:0; text-decoration:none; }
-.brand img{ width:36px; height:36px; border-radius:50%; flex:none; display:block; }
+.brand img{ width:36px; height:36px; border-radius:50%; flex:none; display:block; transition: width .24s ease, height .24s ease; }
+.bar-top.tight .brand img{ width:28px; height:28px; }
 .brand span{
   font-variation-settings:'wdth' 112,'wght' 760;
   font-size:1.02rem; letter-spacing:-0.01em;
@@ -88,6 +108,7 @@ a{ color: var(--chalk); }
 nav{ margin-left:auto; display:flex; gap:22px; font-size:0.94rem; }
 nav a{ color:var(--dim); text-decoration:none; padding-block:4px; border-bottom:1px solid transparent; }
 nav a:hover{ color:var(--chalk); border-bottom-color:var(--gold); }
+nav a[aria-current="true"]{ color:var(--chalk); border-bottom-color:var(--gold); }
 @media (max-width:780px){ nav{ display:none; } }
 
 /* ---------- hero ---------- */
@@ -327,6 +348,9 @@ section, .rig{ scroll-margin-top:72px; }
   *{ animation:none !important; transition:none !important; }
 }
 </style>
+
+<canvas id="dust" aria-hidden="true"></canvas>
+<div id="progress" role="presentation"></div>
 
 <svg class="grain" aria-hidden="true">
   <filter id="grainf"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
@@ -983,5 +1007,150 @@ section, .rig{ scroll-margin-top:72px; }
   shownTotal = REDUCED ? start : bar;
   setTotal(start);
   firstPaint = false;
+})();
+
+/* Ambient chalk field, and the three things that answer the scroll:
+   the progress hairline, the wordmark condensing, and the dust being stirred. */
+(function () {
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canvas  = document.getElementById('dust');
+  var prog    = document.getElementById('progress');
+  var topbar  = document.querySelector('.bar-top');
+  var wordmark= document.querySelector('.brand span');
+  var ctx     = canvas && canvas.getContext ? canvas.getContext('2d') : null;
+
+  var motes = [], w = 0, h = 0, raf = null, stir = 0;
+
+  function sprite(rgb) {
+    var s = document.createElement('canvas');
+    s.width = s.height = 64;
+    var x = s.getContext('2d');
+    var g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0,    'rgba(' + rgb + ',1)');
+    g.addColorStop(0.32, 'rgba(' + rgb + ',0.42)');
+    g.addColorStop(1,    'rgba(' + rgb + ',0)');
+    x.fillStyle = g;
+    x.fillRect(0, 0, 64, 64);
+    return s;
+  }
+  var bone = ctx ? sprite('237,234,227') : null;
+  var gold = ctx ? sprite('201,161,75') : null;
+
+  function seed() {
+    var n = Math.round(Math.min(74, Math.max(22, (w * h) / 24000)));
+    motes = [];
+    for (var i = 0; i < n; i++) {
+      motes.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 0.5 + Math.random() * 2.2,
+        a: 0.05 + Math.random() * 0.13,
+        vy: -(0.05 + Math.random() * 0.2),
+        vx: (Math.random() - 0.5) * 0.13,
+        gold: Math.random() < 0.28
+      });
+    }
+  }
+  function size() {
+    if (!ctx) { return; }
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.clientWidth;
+    h = canvas.clientHeight;
+    canvas.width  = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    seed();
+  }
+  function draw() {
+    if (!ctx) { return; }
+    ctx.clearRect(0, 0, w, h);
+    for (var i = 0; i < motes.length; i++) {
+      var m = motes[i], d = m.r * 9;
+      ctx.globalAlpha = m.a;
+      ctx.drawImage(m.gold ? gold : bone, m.x - d / 2, m.y - d / 2, d, d);
+    }
+    ctx.globalAlpha = 1;
+  }
+  function step() {
+    stir *= 0.9;
+    if (Math.abs(stir) < 0.002) { stir = 0; }
+    for (var i = 0; i < motes.length; i++) {
+      var m = motes[i];
+      m.y += m.vy - stir * (0.5 + m.r * 0.3);
+      m.x += m.vx + stir * 0.04;
+      if (m.y < -10) { m.y = h + 10; m.x = Math.random() * w; }
+      if (m.y > h + 10) { m.y = -10; m.x = Math.random() * w; }
+      if (m.x < -10) { m.x = w + 10; }
+      if (m.x > w + 10) { m.x = -10; }
+    }
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+  function start() { if (raf === null && !REDUCED && !document.hidden && ctx) { raf = requestAnimationFrame(step); } }
+  function stop()  { if (raf !== null) { cancelAnimationFrame(raf); raf = null; } }
+
+  if (ctx) {
+    size();
+    draw();
+    start();
+    var rt = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () { size(); draw(); }, 160);
+    });
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+  }
+
+  // --- scroll reactions -------------------------------------------------
+  var lastY = window.pageYOffset || 0, queued = false;
+
+  function onScrollFrame() {
+    queued = false;
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+
+    if (prog) { prog.style.width = (Math.min(1, Math.max(0, y / max)) * 100).toFixed(2) + '%'; }
+
+    var tight = y > 90;
+    if (topbar && topbar.classList.contains('tight') !== tight) { topbar.classList.toggle('tight', tight); }
+
+    if (wordmark && !REDUCED) {
+      var wd = 112 - Math.min(1, y / 280) * 22;   // the name narrows as the page goes down
+      wordmark.style.fontVariationSettings = "'wdth' " + wd.toFixed(1) + ", 'wght' 760";
+    }
+
+    if (!REDUCED) {
+      stir += (y - lastY) * 0.013;
+      if (stir >  2.6) { stir =  2.6; }
+      if (stir < -2.6) { stir = -2.6; }
+    }
+    lastY = y;
+  }
+  window.addEventListener('scroll', function () {
+    if (queued) { return; }
+    queued = true;
+    requestAnimationFrame(onScrollFrame);
+    setTimeout(function () { if (queued) { onScrollFrame(); } }, 250);  // frames can stall; the bar should not
+  }, { passive: true });
+  onScrollFrame();
+
+  // which section the reader is in
+  var links = {};
+  document.querySelectorAll('nav a[href^="#"]').forEach(function (a) {
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  if (window.IntersectionObserver) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) { return; }
+        Object.keys(links).forEach(function (k) { links[k].removeAttribute('aria-current'); });
+        if (links[e.target.id]) { links[e.target.id].setAttribute('aria-current', 'true'); }
+      });
+    }, { rootMargin: '-14% 0px -56% 0px', threshold: 0 });
+    Object.keys(links).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) { io.observe(el); }
+    });
+  }
 })();
 </script>
