@@ -1,0 +1,987 @@
+<title>Full Armor Fitness Gym</title>
+<link rel="icon" href="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+
+<style>
+/* One family (Archivo variable) carries everything: width and weight stand in for load.
+   Colour comes from the competition plate set, so hue always means a number of kilos.
+   Layout is left-aligned on a single rule, content column 1120px, the bar runs edge to edge. */
+:root{
+  color-scheme: dark;
+
+  --floor:    #15171B;
+  --slab:     #1B1E24;
+  --slab-2:   #22262D;
+  --rule:     #2F343C;
+  --chalk:    #EDEAE3;
+  --dim:      #98A0AA;
+  --gold:     #C9A14B;
+  --steel:    #868D96;
+
+  /* competition plates */
+  --p25:  #C2372C;
+  --p20:  #2C5FA8;
+  --p15:  #D9A520;
+  --p10:  #2F7D4F;
+  --p5:   #E2DFD8;
+  --p2:   #B33428;
+  --p1:   #959CA5;
+
+  --font: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  background: var(--floor);
+  color: var(--chalk);
+  font-family: var(--font);
+  font-variation-settings: 'wdth' 100, 'wght' 400;
+  font-size: 17px;
+  line-height: 1.62;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.grain{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 90;
+}
+
+.wrap{ width:100%; max-width:1120px; margin-inline:auto; padding-inline:20px; }
+
+h1,h2,h3{ margin:0; line-height:1.0; text-wrap:balance; }
+h1{ font-size: clamp(2.9rem, 8.4vw, 5.6rem); font-variation-settings:'wdth' 122,'wght' 880; letter-spacing:-0.02em; }
+h2{ font-size: clamp(1.9rem, 4.6vw, 2.9rem); font-variation-settings:'wdth' 115,'wght' 800; letter-spacing:-0.015em; }
+h3{ font-size: 1.2rem; font-variation-settings:'wdth' 110,'wght' 700; line-height:1.2; }
+p{ margin:0; }
+a{ color: var(--chalk); }
+
+.lead{ font-size:1.12rem; color:var(--chalk); max-width:56ch; }
+.sub{ color:var(--dim); max-width:62ch; }
+.num{ font-variant-numeric: tabular-nums; }
+
+/* ---------- chrome ---------- */
+.bar-top{
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 40;
+  background: rgba(21,23,27,0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
+}
+.bar-top .wrap{ display:flex; align-items:center; gap:14px; padding-block:9px; }
+.brand{ display:flex; align-items:center; gap:11px; min-width:0; text-decoration:none; }
+.brand img{ width:36px; height:36px; border-radius:50%; flex:none; display:block; }
+.brand span{
+  font-variation-settings:'wdth' 112,'wght' 760;
+  font-size:1.02rem; letter-spacing:-0.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+nav{ margin-left:auto; display:flex; gap:22px; font-size:0.94rem; }
+nav a{ color:var(--dim); text-decoration:none; padding-block:4px; border-bottom:1px solid transparent; }
+nav a:hover{ color:var(--chalk); border-bottom-color:var(--gold); }
+@media (max-width:780px){ nav{ display:none; } }
+
+/* ---------- hero ---------- */
+.hero{ position:relative; overflow:hidden; border-bottom:1px solid var(--rule); }
+.hero::before{
+  content:"";
+  position:absolute; inset:-30% -10% auto -10%; height:70%;
+  background: radial-gradient(60% 100% at 24% 0%, rgba(201,161,75,0.16), transparent 70%);
+  pointer-events:none;
+}
+.hero .wrap{ position:relative; padding-block:46px 30px; }
+.hero-top{ display:flex; gap:26px; align-items:flex-start; flex-wrap:wrap; }
+.hero-logo{
+  width:112px; height:112px; border-radius:50%; flex:none;
+  box-shadow: 0 0 0 1px rgba(201,161,75,0.45), 0 18px 40px rgba(0,0,0,0.55);
+}
+@media (max-width:560px){ .hero-logo{ width:84px; height:84px; } }
+.hero h1 span{ display:block; }
+.where{ margin-top:14px; color:var(--dim); }
+.hero .lead{ margin-top:16px; }
+
+.actions{ display:flex; flex-wrap:wrap; gap:11px; margin-top:24px; }
+.btn{
+  font-family:inherit; font-size:0.97rem;
+  font-variation-settings:'wdth' 104,'wght' 640;
+  text-decoration:none; cursor:pointer;
+  padding:12px 20px; border-radius:2px;
+  background:var(--gold); color:#14161A; border:1px solid var(--gold);
+  transition: transform .12s ease, background .16s ease;
+}
+.btn:hover{ background:#DDB763; border-color:#DDB763; }
+.btn:active{ transform: translateY(1px); }
+.btn.quiet{ background:transparent; color:var(--chalk); border-color:var(--rule); }
+.btn.quiet:hover{ background:var(--slab-2); border-color:var(--steel); }
+
+/* ---------- the bar ---------- */
+.rig{ margin-top:34px; }
+.rig-head{ display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:10px; }
+.rig-head p{ color:var(--dim); font-size:0.97rem; }
+
+.stage{
+  background:
+    radial-gradient(70% 120% at 50% 118%, rgba(0,0,0,0.5), transparent 60%),
+    linear-gradient(180deg, var(--slab) 0%, #16191E 100%);
+  border:1px solid var(--rule);
+  border-radius:3px;
+  padding:6px 6px 0;
+}
+.stage svg{ display:block; width:100%; height:auto; max-width:100%; touch-action:manipulation; }
+.plate-g{ cursor:pointer; }
+.plate-g:hover .face{ filter: brightness(1.16); }
+
+@keyframes slideOn{ from{ transform: translateX(var(--from,0)); } to{ transform:none; } }
+.plate-g.in{ animation: slideOn .34s cubic-bezier(.17,.86,.26,1) var(--d,0s) both; }
+
+.readout{
+  display:flex; flex-wrap:wrap; align-items:flex-end; gap:12px 30px;
+  padding:16px 2px 0;
+}
+.total{
+  font-variation-settings:'wdth' 124,'wght' 880;
+  font-size: clamp(2.6rem, 8vw, 4rem); line-height:0.85;
+  letter-spacing:-0.03em;
+}
+.total small{ font-size:0.3em; font-variation-settings:'wdth' 108,'wght' 600; color:var(--dim); margin-left:6px; letter-spacing:0; }
+.readout .side{ color:var(--dim); font-size:0.97rem; padding-bottom:4px; }
+.readout .side b{ color:var(--chalk); font-variation-settings:'wdth' 104,'wght' 680; }
+
+.controls{ display:flex; flex-wrap:wrap; gap:18px 26px; align-items:center; padding:18px 2px 6px; }
+.plate-row{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+.pbtn{
+  font-family:inherit; cursor:pointer;
+  font-variation-settings:'wdth' 108,'wght' 700;
+  font-variant-numeric: tabular-nums;
+  font-size:0.95rem; color:#111316;
+  border:none; border-radius:2px;
+  padding:9px 13px; min-width:46px;
+  transition: transform .1s ease, filter .14s ease;
+}
+.pbtn:hover{ filter:brightness(1.12); }
+.pbtn:active{ transform: translateY(1px) scale(.97); }
+.pbtn.light{ color:#111316; }
+.pbtn.dark{ color:#F2EFE8; }
+
+.slider-row{ flex:1 1 320px; min-width:240px; }
+.slider-row label{ display:block; color:var(--dim); font-size:0.92rem; margin-bottom:7px; }
+input[type=range]{ width:100%; accent-color: var(--gold); }
+.seg{ display:inline-flex; border:1px solid var(--rule); border-radius:2px; overflow:hidden; }
+.seg button{
+  font-family:inherit; font-size:0.9rem; cursor:pointer;
+  background:transparent; color:var(--dim); border:none;
+  padding:8px 13px;
+}
+.seg button[aria-pressed="true"]{ background:var(--slab-2); color:var(--chalk); font-variation-settings:'wdth' 104,'wght' 680; }
+.linkish{
+  background:none; border:none; cursor:pointer; font-family:inherit; font-size:0.93rem;
+  color:var(--dim); text-decoration:underline; text-underline-offset:3px; padding:4px 0;
+}
+.linkish:hover{ color:var(--chalk); }
+
+/* ---------- sections ---------- */
+section{ border-bottom:1px solid var(--rule); }
+section > .wrap{ padding-block:54px; }
+.head{ max-width:62ch; margin-bottom:28px; }
+.head h2 + p{ margin-top:12px; color:var(--dim); }
+
+/* working sets */
+.sets{ display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1.25fr); gap:30px; align-items:start; }
+@media (max-width:820px){ .sets{ grid-template-columns:1fr; gap:24px; } }
+.est{
+  background:var(--slab); border:1px solid var(--rule); border-left:3px solid var(--gold);
+  padding:22px;
+}
+.est .big{
+  font-variation-settings:'wdth' 124,'wght' 880;
+  font-size:3.2rem; line-height:0.9; letter-spacing:-0.03em; margin-top:6px;
+}
+.est .big small{ font-size:0.28em; color:var(--dim); font-variation-settings:'wdth' 108,'wght' 600; margin-left:6px; }
+.est .why{ color:var(--dim); font-size:0.93rem; margin-top:12px; }
+.reps-row{ margin-top:18px; }
+.reps-row label{ display:block; color:var(--dim); font-size:0.92rem; margin-bottom:7px; }
+
+.tablewrap{ overflow-x:auto; border:1px solid var(--rule); position:relative; }
+.sr{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+table{ width:100%; border-collapse:collapse; font-size:0.95rem; min-width:440px; }
+th,td{ text-align:left; padding:11px 14px; border-bottom:1px solid var(--rule); white-space:nowrap; }
+th{ color:var(--dim); font-variation-settings:'wdth' 104,'wght' 620; font-size:0.88rem; }
+tbody tr:last-child td{ border-bottom:none; }
+tbody tr:hover{ background:var(--slab); }
+td.w{ font-variant-numeric:tabular-nums; font-variation-settings:'wdth' 108,'wght' 700; }
+td.pl{ color:var(--dim); white-space:normal; }
+.load-btn{
+  font-family:inherit; font-size:0.86rem; cursor:pointer;
+  background:transparent; color:var(--dim); border:1px solid var(--rule);
+  padding:5px 11px; border-radius:2px;
+}
+.load-btn:hover{ color:var(--chalk); border-color:var(--gold); }
+
+/* programs */
+.chips{ display:flex; flex-wrap:wrap; gap:9px; margin-bottom:22px; }
+.chip{
+  font-family:inherit; font-size:0.94rem; cursor:pointer;
+  background:var(--slab); color:var(--chalk); border:1px solid var(--rule);
+  padding:9px 15px; border-radius:2px;
+  transition: border-color .15s ease, background .15s ease;
+}
+.chip:hover{ border-color:var(--steel); }
+.chip[aria-pressed="true"]{ border-color:var(--gold); background:var(--slab-2); }
+
+.rows{ border-top:1px solid var(--rule); }
+.row{ border-bottom:1px solid var(--rule); }
+.row > button{
+  width:100%; display:flex; align-items:center; gap:16px;
+  background:transparent; border:none; cursor:pointer;
+  font-family:inherit; color:var(--chalk); text-align:left;
+  padding:20px 2px;
+}
+.row > button:hover{ background:rgba(255,255,255,0.025); }
+.row .tick{ width:4px; align-self:stretch; background:var(--rule); flex:none; }
+.row[data-open="true"] .tick{ background:var(--gold); }
+.row .title{ font-variation-settings:'wdth' 112,'wght' 740; font-size:1.18rem; flex:1 1 auto; min-width:0; }
+.row .for{ color:var(--dim); font-size:0.95rem; flex:0 1 auto; }
+@media (max-width:640px){ .row .for{ display:none; } }
+.row .plus{ color:var(--dim); font-size:1.4rem; line-height:1; width:18px; text-align:center; transition: transform .2s ease; }
+.row[data-open="true"] .plus{ transform: rotate(45deg); color:var(--gold); }
+.drawer{ overflow:hidden; height:0; transition: height .3s cubic-bezier(.3,.7,.3,1); }
+.drawer .inner{ padding:0 2px 24px 20px; display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:26px; }
+@media (max-width:720px){ .drawer .inner{ grid-template-columns:1fr; gap:16px; } }
+.drawer p{ color:var(--dim); max-width:48ch; }
+.week{ list-style:none; margin:0; padding:0; }
+.week li{ display:flex; gap:14px; padding:7px 0; border-bottom:1px solid var(--rule); font-size:0.95rem; }
+.week li:last-child{ border-bottom:none; }
+.week .d{ color:var(--dim); width:84px; flex:none; }
+
+/* coaches */
+.coaches{ display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:26px; }
+@media (max-width:720px){ .coaches{ grid-template-columns:1fr; } }
+.coach h3{ margin-bottom:4px; }
+.coach .what{ color:var(--gold); font-size:0.95rem; margin-bottom:10px; }
+.coach p{ color:var(--dim); max-width:46ch; }
+.coach .mark{ width:44px; height:3px; background:var(--gold); margin-bottom:16px; }
+
+.quote{
+  margin-top:34px; padding:26px 0 0; border-top:1px solid var(--rule);
+  display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:26px; align-items:start;
+}
+@media (max-width:720px){ .quote{ grid-template-columns:1fr; gap:14px; } }
+.quote .big{
+  font-variation-settings:'wdth' 118,'wght' 820;
+  font-size: clamp(1.7rem, 4.4vw, 2.5rem); line-height:1.02; letter-spacing:-0.02em;
+}
+.quote p{ color:var(--dim); max-width:48ch; }
+
+/* rates */
+.rate{ display:flex; align-items:baseline; gap:20px; padding:20px 2px; border-bottom:1px solid var(--rule); flex-wrap:wrap; }
+.rate:first-child{ border-top:1px solid var(--rule); }
+.rate .n{ font-variation-settings:'wdth' 112,'wght' 740; font-size:1.15rem; flex:0 0 190px; }
+.rate .d{ color:var(--dim); flex:1 1 260px; min-width:0; }
+.rate .p{
+  font-variation-settings:'wdth' 120,'wght' 820; font-size:1.7rem;
+  color:var(--steel); letter-spacing:0.02em; margin-left:auto;
+}
+.aside{ margin-top:22px; color:var(--dim); border-left:2px solid var(--gold); padding-left:15px; max-width:60ch; }
+
+/* visit */
+.visit{ display:grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); gap:30px; }
+@media (max-width:780px){ .visit{ grid-template-columns:1fr; gap:24px; } }
+.field{ padding:14px 0; border-bottom:1px solid var(--rule); }
+.field:first-child{ border-top:1px solid var(--rule); }
+.field .k{ color:var(--dim); font-size:0.9rem; margin-bottom:3px; }
+.field .v{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.copy{
+  font-family:inherit; font-size:0.84rem; cursor:pointer;
+  background:transparent; color:var(--dim); border:1px solid var(--rule);
+  padding:4px 10px; border-radius:2px;
+}
+.copy:hover{ color:var(--chalk); border-color:var(--gold); }
+.socials{ display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
+.socials a{
+  font-size:0.94rem; text-decoration:none; color:var(--chalk);
+  border:1px solid var(--rule); padding:9px 15px; border-radius:2px;
+}
+.socials a:hover{ border-color:var(--gold); }
+
+footer .wrap{ padding-block:34px 46px; display:flex; flex-wrap:wrap; gap:18px 26px; align-items:center; }
+footer img{ width:38px; height:38px; border-radius:50%; }
+footer p{ color:var(--dim); font-size:0.94rem; }
+footer .verse{ font-style:italic; }
+
+:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+html{ scroll-behavior:smooth; }
+section, .rig{ scroll-margin-top:72px; }
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *{ animation:none !important; transition:none !important; }
+}
+</style>
+
+<svg class="grain" aria-hidden="true">
+  <filter id="grainf"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  <rect width="100%" height="100%" filter="url(#grainf)"/>
+</svg>
+
+<header class="bar-top">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <img src="logo.jpg" alt="Full Armor Fitness Gym">
+      <span>Full Armor Fitness Gym</span>
+    </a>
+    <nav>
+      <a href="#bar">The bar</a>
+      <a href="#sets">Working sets</a>
+      <a href="#programs">Programs</a>
+      <a href="#rates">Rates</a>
+      <a href="#visit">Visit</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <img class="hero-logo" src="logo.jpg" alt="">
+      <div style="flex:1 1 320px;min-width:0">
+        <h1><span>Full Armor</span><span>Fitness Gym</span></h1>
+        <p class="where">23 Albatross St., St. Francis Subdivision, Pandayan, Meycauayan, Bulacan</p>
+        <p class="lead">Coach Bong and Coach Cehl run the floor themselves. You get shown how to lift before anyone tells you how much to lift.</p>
+        <div class="actions">
+          <a class="btn" href="https://www.facebook.com/p/Full-Armor-Fitness-Gym-by-Coach-Bong-and-Coach-Cehl-61591461613140/">Message us on Facebook</a>
+          <a class="btn quiet" href="#visit">Plan your first visit</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="rig" id="bar">
+      <div class="rig-head">
+        <h2>Load the bar</h2>
+        <p>Tap a plate to add it, tap a loaded plate to strip it, or drag to a target weight.</p>
+      </div>
+
+      <div class="stage">
+        <svg id="rig" viewBox="0 0 1000 268" role="img" aria-label="Barbell loaded with weight plates">
+          <defs>
+            <linearGradient id="steelg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#C6CCD3"/>
+              <stop offset="0.42" stop-color="#8A9199"/>
+              <stop offset="0.58" stop-color="#6E757D"/>
+              <stop offset="1" stop-color="#A8AFB7"/>
+            </linearGradient>
+            <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffffff" stop-opacity="0.30"/>
+              <stop offset="0.35" stop-color="#ffffff" stop-opacity="0.05"/>
+              <stop offset="0.62" stop-color="#000000" stop-opacity="0.10"/>
+              <stop offset="1" stop-color="#000000" stop-opacity="0.34"/>
+            </linearGradient>
+            <pattern id="knurl" width="5" height="10" patternUnits="userSpaceOnUse">
+              <rect width="5" height="10" fill="#7E858D"/>
+              <path d="M0 0 L5 10 M-5 0 L0 10 M5 0 L10 10" stroke="#5B6168" stroke-width="1.1"/>
+            </pattern>
+            <radialGradient id="floorsh" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0" stop-color="#000" stop-opacity="0.62"/>
+              <stop offset="1" stop-color="#000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <ellipse cx="500" cy="240" rx="430" ry="20" fill="url(#floorsh)"/>
+
+          <!-- shaft -->
+          <rect x="250" y="124" width="500" height="13" rx="2" fill="url(#steelg)"/>
+          <rect x="396" y="124" width="208" height="13" fill="url(#knurl)" opacity="0.9"/>
+          <!-- inner collars -->
+          <rect x="234" y="114" width="18" height="33" rx="2" fill="url(#steelg)"/>
+          <rect x="748" y="114" width="18" height="33" rx="2" fill="url(#steelg)"/>
+          <!-- sleeves -->
+          <rect x="44" y="118" width="192" height="25" rx="2" fill="url(#steelg)"/>
+          <rect x="764" y="118" width="192" height="25" rx="2" fill="url(#steelg)"/>
+          <rect x="40" y="112" width="10" height="37" rx="2" fill="url(#steelg)"/>
+          <rect x="950" y="112" width="10" height="37" rx="2" fill="url(#steelg)"/>
+
+          <g id="plates"></g>
+        </svg>
+      </div>
+
+      <div class="readout">
+        <div class="total num" id="total">60<small>kg</small></div>
+        <div class="side">per side <b class="num" id="perside">20 kg</b> &nbsp;&middot;&nbsp; <span id="sidelist">15 + 5</span></div>
+        <div class="side">bar <b class="num" id="barlabel">20 kg</b></div>
+      </div>
+
+      <div class="controls">
+        <div class="plate-row" id="plateBtns" aria-label="Add a plate"></div>
+        <div class="seg" role="group" aria-label="Bar weight">
+          <button type="button" id="bar20" aria-pressed="true">20 kg bar</button>
+          <button type="button" id="bar15" aria-pressed="false">15 kg bar</button>
+        </div>
+        <button class="linkish" type="button" id="strip">Strip the bar</button>
+      </div>
+
+      <div class="controls" style="padding-top:0">
+        <div class="slider-row">
+          <label for="target">Target weight &mdash; <span class="num" id="targetVal">60 kg</span></label>
+          <input type="range" id="target" min="20" max="240" step="2.5" value="60">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sets">
+  <div class="wrap">
+    <div class="head">
+      <h2>Work out your sets</h2>
+      <p>Whatever is on the bar above, tell us how many clean reps you can get with it and we will estimate the rest of your week. Coaches check these against what you actually move on the floor.</p>
+    </div>
+
+    <div class="sets">
+      <div class="est">
+        <p class="sub">Estimated one-rep max</p>
+        <div class="big num" id="orm">70<small>kg</small></div>
+        <div class="reps-row">
+          <label for="reps">Clean reps at <span class="num" id="atWeight">60 kg</span> &mdash; <span class="num" id="repsVal">5</span></label>
+          <input type="range" id="reps" min="1" max="12" step="1" value="5">
+        </div>
+        <p class="why" id="why">Epley formula. Past ten reps the estimate drifts, so treat it as a ceiling, not a target.</p>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th scope="col">Intensity</th><th scope="col">Weight</th><th scope="col">Plates per side</th><th scope="col"><span class="sr">Load</span></th></tr>
+          </thead>
+          <tbody id="pct"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="programs">
+  <div class="wrap">
+    <div class="head">
+      <h2>What we run</h2>
+      <p>Four ways in. Pick where you are starting and the right one opens.</p>
+    </div>
+
+    <div class="chips" role="group" aria-label="Where are you starting?">
+      <button class="chip" type="button" data-opens="p1" aria-pressed="false">I have never lifted</button>
+      <button class="chip" type="button" data-opens="p2" aria-pressed="false">I have been lifting a while</button>
+      <button class="chip" type="button" data-opens="p3" aria-pressed="false">I want a coach beside me</button>
+      <button class="chip" type="button" data-opens="p4" aria-pressed="false">I am racing HYROX</button>
+    </div>
+
+    <div class="rows">
+      <article class="row" id="p1" data-open="false">
+        <button type="button" aria-expanded="false" aria-controls="p1d">
+          <span class="tick" aria-hidden="true"></span>
+          <span class="title">Beginner start</span>
+          <span class="for">first four weeks</span>
+          <span class="plus" aria-hidden="true">+</span>
+        </button>
+        <div class="drawer" id="p1d"><div><div class="inner">
+          <p>Learn the five patterns before you load them. A coach watches every set in week one, and you leave with a written week you can follow on your own.</p>
+          <ul class="week">
+            <li><span class="d">Monday</span><span>Squat pattern, pull, carry</span></li>
+            <li><span class="d">Wednesday</span><span>Hinge, press, core</span></li>
+            <li><span class="d">Friday</span><span>Repeat Monday, add load</span></li>
+            <li><span class="d">Weekend</span><span>Walk, stretch, rest</span></li>
+          </ul>
+        </div></div></div>
+      </article>
+
+      <article class="row" id="p2" data-open="false">
+        <button type="button" aria-expanded="false" aria-controls="p2d">
+          <span class="tick" aria-hidden="true"></span>
+          <span class="title">Strength and conditioning</span>
+          <span class="for">three to five days</span>
+          <span class="plus" aria-hidden="true">+</span>
+        </button>
+        <div class="drawer" id="p2d"><div><div class="inner">
+          <p>Barbell work programmed in blocks, logged every session, progressed when the numbers say so. Conditioning sits at the end of the session so it never eats the strength work.</p>
+          <ul class="week">
+            <li><span class="d">Day 1</span><span>Squat, accessories, sled</span></li>
+            <li><span class="d">Day 2</span><span>Bench, rows, arms</span></li>
+            <li><span class="d">Day 3</span><span>Deadlift, posterior chain</span></li>
+            <li><span class="d">Day 4</span><span>Press, pull-ups, intervals</span></li>
+          </ul>
+        </div></div></div>
+      </article>
+
+      <article class="row" id="p3" data-open="false">
+        <button type="button" aria-expanded="false" aria-controls="p3d">
+          <span class="tick" aria-hidden="true"></span>
+          <span class="title">One on one with a coach</span>
+          <span class="for">by appointment</span>
+          <span class="plus" aria-hidden="true">+</span>
+        </button>
+        <div class="drawer" id="p3d"><div><div class="inner">
+          <p>A full hour with Coach Bong or Coach Cehl beside you, start to finish. Good for coming back from an injury, for shift workers who cannot keep a fixed schedule, and for anyone who wants their form fixed now rather than in six months.</p>
+          <ul class="week">
+            <li><span class="d">Session</span><span>Warm-up built for your joints</span></li>
+            <li><span class="d">Main</span><span>Lift corrected rep by rep</span></li>
+            <li><span class="d">After</span><span>Plan written for your next week</span></li>
+            <li><span class="d">Monthly</span><span>Numbers reviewed together</span></li>
+          </ul>
+        </div></div></div>
+      </article>
+
+      <article class="row" id="p4" data-open="false">
+        <button type="button" aria-expanded="false" aria-controls="p4d">
+          <span class="tick" aria-hidden="true"></span>
+          <span class="title">HYROX race prep</span>
+          <span class="for">eight weeks out</span>
+          <span class="plus" aria-hidden="true">+</span>
+        </button>
+        <div class="drawer" id="p4d"><div><div class="inner">
+          <p>Eight stations and eight kilometres of running, and the running is what breaks people. We train the stations under fatigue and rehearse your pacing before race day.</p>
+          <ul class="week">
+            <li><span class="d">Stations</span><span>Sled push and pull, ski, row</span></li>
+            <li><span class="d">Compromised</span><span>1 km repeats straight off a station</span></li>
+            <li><span class="d">Grip</span><span>Farmer carries, wall balls, lunges</span></li>
+            <li><span class="d">Rehearsal</span><span>Half simulation at race pace</span></li>
+          </ul>
+        </div></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="coaches">
+  <div class="wrap">
+    <div class="head">
+      <h2>The coaches</h2>
+      <p>Both names are on the door because both of them are on the floor.</p>
+    </div>
+
+    <div class="coaches">
+      <article class="coach">
+        <div class="mark" aria-hidden="true"></div>
+        <h3>Coach Bong</h3>
+        <p class="what">Programming and the strength floor</p>
+        <p>Writes the blocks and keeps the logbook honest. Ask him what your first real set of numbers should look like.</p>
+      </article>
+      <article class="coach">
+        <div class="mark" aria-hidden="true"></div>
+        <h3>Coach Cehl</h3>
+        <p class="what">Conditioning and group sessions</p>
+        <p>Runs the group work and the race prep. Ask her how to start from nothing without wrecking yourself in week one.</p>
+      </article>
+    </div>
+
+    <div class="quote">
+      <p class="big">Sama-sama tayong lalakas.</p>
+      <p>We get strong together. Full Armor is a neighbourhood gym in Pandayan: students, people on shift, parents, and a few training for a race, all on the same floor at the same time.</p>
+    </div>
+  </div>
+</section>
+
+<section id="rates">
+  <div class="wrap">
+    <div class="head">
+      <h2>Rates</h2>
+      <p>Current rates are posted at the counter. Message us and we will send the card, and ask before you pay because promos run through the year.</p>
+    </div>
+
+    <div class="rate"><span class="n">Walk-in</span><span class="d">One session, full access to the floor, no commitment.</span><span class="p num">&#8369;&mdash;&mdash;</span></div>
+    <div class="rate"><span class="n">Monthly</span><span class="d">Train as often as you like, coaching on the floor, programming included.</span><span class="p num">&#8369;&mdash;&mdash;</span></div>
+    <div class="rate"><span class="n">Personal training</span><span class="d">Booked sessions with Coach Bong or Coach Cehl, plan written for you.</span><span class="p num">&#8369;&mdash;&mdash;</span></div>
+
+    <p class="aside">Members get a discount during their birthday month. Ask a coach for the current amount.</p>
+  </div>
+</section>
+
+<section id="visit">
+  <div class="wrap">
+    <div class="head">
+      <h2>Come and see the place</h2>
+      <p>Inside St. Francis Subdivision in Pandayan. Message us if you are coming off the main road and we will give you the turn.</p>
+    </div>
+
+    <div class="visit">
+      <div>
+        <div class="field">
+          <div class="k">Address</div>
+          <div class="v">23 Albatross St., St. Francis Subdivision, Pandayan, Meycauayan, Bulacan 3020</div>
+        </div>
+        <div class="field">
+          <div class="k">Mobile</div>
+          <div class="v"><span class="num">0975 309 1751</span><button class="copy" type="button" data-copy="0975 309 1751">Copy</button></div>
+        </div>
+        <div class="field">
+          <div class="k">Email</div>
+          <div class="v" style="word-break:break-word"><span>fullarmorfitnessgym@gmail.com</span><button class="copy" type="button" data-copy="fullarmorfitnessgym@gmail.com">Copy</button></div>
+        </div>
+        <div class="field">
+          <div class="k">Hours</div>
+          <div class="v">Posted every week on our Facebook page. Message us for today.</div>
+        </div>
+        <div class="actions">
+          <a class="btn quiet" href="https://www.google.com/maps/search/?api=1&amp;query=23%20Albatross%20St%20St%20Francis%20Subdivision%20Pandayan%20Meycauayan%20Bulacan">Open in Google Maps</a>
+        </div>
+      </div>
+
+      <div>
+        <h3>Before your first session</h3>
+        <p class="sub" style="margin-top:10px">Bring water, a towel and shoes you can stand flat in. A coach walks you around the floor before you touch anything, and nobody is going to put you under a loaded bar on day one.</p>
+        <div class="socials">
+          <a href="https://www.facebook.com/p/Full-Armor-Fitness-Gym-by-Coach-Bong-and-Coach-Cehl-61591461613140/">Facebook</a>
+          <a href="https://www.instagram.com/fullarmorfitnessgym/">Instagram</a>
+          <a href="https://www.tiktok.com/@fullarmorfitnessgym">TikTok</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="logo.jpg" alt="">
+    <p class="verse">&ldquo;Put on the full armor of God.&rdquo; &mdash; Ephesians 6:11</p>
+    <p style="margin-left:auto">Full Armor Fitness Gym, Meycauayan, Bulacan</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var SPEC = [
+    { kg: 25,   v: '--p25', h: 172, w: 21, dark: false },
+    { kg: 20,   v: '--p20', h: 168, w: 19, dark: true  },
+    { kg: 15,   v: '--p15', h: 152, w: 17, dark: false },
+    { kg: 10,   v: '--p10', h: 136, w: 15, dark: true  },
+    { kg: 5,    v: '--p5',  h: 100, w: 12, dark: false },
+    { kg: 2.5,  v: '--p2',  h: 78,  w: 10, dark: true  },
+    { kg: 1.25, v: '--p1',  h: 64,  w: 9,  dark: false }
+  ];
+  var DEN = SPEC.map(function (s) { return s.kg; });
+  var specOf = {};
+  SPEC.forEach(function (s) { specOf[s.kg] = s; });
+
+  var platesG  = document.getElementById('plates');
+  var totalEl  = document.getElementById('total');
+  var perSideEl= document.getElementById('perside');
+  var sideList = document.getElementById('sidelist');
+  var barLabel = document.getElementById('barlabel');
+  var targetEl = document.getElementById('target');
+  var targetVal= document.getElementById('targetVal');
+  var repsEl   = document.getElementById('reps');
+  var repsVal  = document.getElementById('repsVal');
+  var ormEl    = document.getElementById('orm');
+  var atWeight = document.getElementById('atWeight');
+  var whyEl    = document.getElementById('why');
+  var pctBody  = document.getElementById('pct');
+
+  var bar = 20;
+  var side = [];          // kg values, heaviest first
+  var prevSide = [];      // what is already on the sleeve, so only new plates slide on
+  var firstPaint = true;
+  var shownTotal = 0;
+
+  function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
+  function total() { return bar + 2 * sum(side); }
+  function fmt(n) { return (Math.round(n * 100) / 100).toString(); }
+
+  // greedy works for this denomination set: every plate is a multiple of the next one down
+  function platesFor(perSide) {
+    var left = Math.round(perSide / 1.25) * 1.25;
+    var out = [];
+    for (var i = 0; i < DEN.length && out.length < 14; i++) {
+      while (left >= DEN[i] - 0.0001 && out.length < 14) {
+        out.push(DEN[i]);
+        left = Math.round((left - DEN[i]) * 100) / 100;
+      }
+    }
+    return out;
+  }
+
+  function setTotal(kg) {
+    var per = Math.max(0, Math.round(((kg - bar) / 2) / 1.25) * 1.25);
+    side = platesFor(per);
+    render();
+  }
+
+  function drawPlates() {
+    var stack = side.slice();
+    var widthUsed = stack.reduce(function (a, k) { return a + specOf[k].w + 2; }, 0);
+    var room = 186;
+    var scale = widthUsed > room ? room / widthUsed : 1;
+
+    platesG.textContent = '';
+    var offL = 234, offR = 766;
+
+    stack.forEach(function (kg, i) {
+      var s = specOf[kg];
+      var w = s.w * scale;
+      var isNew = prevSide[i] !== kg;
+      [-1, 1].forEach(function (dir) {
+        var x = dir < 0 ? (offL - w) : offR;
+        var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'plate-g');
+        g.setAttribute('tabindex', '0');
+        g.setAttribute('role', 'button');
+        g.setAttribute('aria-label', 'Remove the ' + fmt(kg) + ' kilo plate');
+        g.dataset.kg = String(kg);
+        g.style.setProperty('--from', (dir * 34) + 'px');
+        g.style.setProperty('--d', (firstPaint ? i * 70 : 0) + 'ms');
+
+        var face = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        face.setAttribute('class', 'face');
+        face.setAttribute('x', x.toFixed(1));
+        face.setAttribute('y', (130 - s.h / 2).toFixed(1));
+        face.setAttribute('width', w.toFixed(1));
+        face.setAttribute('height', String(s.h));
+        face.setAttribute('rx', '3');
+        face.setAttribute('fill', 'var(' + s.v + ')');
+        g.appendChild(face);
+
+        var sh = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        sh.setAttribute('x', x.toFixed(1));
+        sh.setAttribute('y', (130 - s.h / 2).toFixed(1));
+        sh.setAttribute('width', w.toFixed(1));
+        sh.setAttribute('height', String(s.h));
+        sh.setAttribute('rx', '3');
+        sh.setAttribute('fill', 'url(#sheen)');
+        sh.setAttribute('pointer-events', 'none');
+        g.appendChild(sh);
+
+        var hub = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        hub.setAttribute('x', x.toFixed(1));
+        hub.setAttribute('y', '113');
+        hub.setAttribute('width', w.toFixed(1));
+        hub.setAttribute('height', '34');
+        hub.setAttribute('fill', '#767D85');
+        hub.setAttribute('pointer-events', 'none');
+        g.appendChild(hub);
+
+        if (!REDUCED && isNew) { g.classList.add('in'); }
+        platesG.appendChild(g);
+      });
+      offL -= (w + 2);
+      offR += (w + 2);
+    });
+    prevSide = stack.slice();
+  }
+
+  var countGen = 0;
+  function countTo(target) {
+    countGen += 1;
+    var gen = countGen;
+    var from = shownTotal;
+    shownTotal = target;
+    function finish() { if (gen === countGen) { totalEl.innerHTML = fmt(target) + '<small>kg</small>'; } }
+    if (REDUCED || Math.abs(target - from) < 0.01) { finish(); return; }
+
+    var start = null;
+    function step(ts) {
+      if (gen !== countGen) { return; }
+      if (start === null) { start = ts; }
+      var k = Math.min(1, (ts - start) / 280);
+      var v = from + (target - from) * (1 - Math.pow(1 - k, 3));
+      totalEl.innerHTML = (Math.round(v * 2) / 2).toFixed(1).replace(/\.0$/, '') + '<small>kg</small>';
+      if (k < 1) { requestAnimationFrame(step); } else { finish(); }
+    }
+    requestAnimationFrame(step);
+    setTimeout(finish, 420);   // the frame loop stalls in a tab that is not painting
+  }
+
+  function renderPct() {
+    var t = total();
+    var reps = parseInt(repsEl.value, 10);
+    var orm = reps === 1 ? t : t * (1 + reps / 30);
+    ormEl.innerHTML = (Math.round(orm * 2) / 2) + '<small>kg</small>';
+    atWeight.textContent = fmt(t) + ' kg';
+    repsVal.textContent = String(reps);
+    whyEl.textContent = reps > 10
+      ? 'Epley formula. Above ten reps this reads high, so treat it as a ceiling rather than a target.'
+      : 'Epley formula. Check it against what you actually move on the floor before you chase it.';
+
+    var rows = '';
+    [95, 90, 85, 80, 75, 70, 65, 60].forEach(function (p) {
+      var raw = orm * p / 100;
+      var per = Math.round(((raw - bar) / 2) / 1.25) * 1.25;
+      if (per < 0) { per = 0; }
+      var w = bar + 2 * per;
+      var pl = platesFor(per);
+      rows += '<tr><td>' + p + '%</td>'
+        + '<td class="w num">' + fmt(w) + ' kg</td>'
+        + '<td class="pl">' + (pl.length ? pl.map(fmt).join(' + ') : 'bar only') + '</td>'
+        + '<td><button class="load-btn" type="button" data-load="' + w + '">Load it</button></td></tr>';
+    });
+    pctBody.innerHTML = rows;
+  }
+
+  function render() {
+    drawPlates();
+    var per = sum(side);
+    countTo(total());
+    perSideEl.textContent = fmt(per) + ' kg';
+    sideList.textContent = side.length ? side.map(fmt).join(' + ') : 'empty sleeves';
+    barLabel.textContent = bar + ' kg';
+    targetEl.min = String(bar);
+    targetEl.value = String(Math.min(parseFloat(targetEl.max), Math.max(bar, total())));
+    targetVal.textContent = fmt(total()) + ' kg';
+    renderPct();
+    try { localStorage.setItem('fa.bar', JSON.stringify({ bar: bar, total: total(), reps: repsEl.value })); } catch (e) {}
+  }
+
+  // plate buttons
+  SPEC.forEach(function (s) {
+    var b = document.createElement('button');
+    b.className = 'pbtn ' + (s.dark ? 'dark' : 'light');
+    b.type = 'button';
+    b.textContent = fmt(s.kg);
+    b.style.background = 'var(' + s.v + ')';
+    b.setAttribute('aria-label', 'Add a ' + fmt(s.kg) + ' kilo plate to each side');
+    b.addEventListener('click', function () {
+      side.push(s.kg);
+      side.sort(function (a, c) { return c - a; });
+      firstPaint = false;
+      render();
+    });
+    document.getElementById('plateBtns').appendChild(b);
+  });
+
+  platesG.addEventListener('click', function (e) {
+    var g = e.target.closest('.plate-g');
+    if (!g) { return; }
+    var kg = parseFloat(g.dataset.kg);
+    var i = side.indexOf(kg);
+    if (i > -1) { side.splice(i, 1); firstPaint = false; render(); }
+  });
+  platesG.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') { return; }
+    var g = e.target.closest('.plate-g');
+    if (!g) { return; }
+    e.preventDefault();
+    var i = side.indexOf(parseFloat(g.dataset.kg));
+    if (i > -1) { side.splice(i, 1); firstPaint = false; render(); }
+  });
+
+  document.getElementById('strip').addEventListener('click', function () {
+    side = []; firstPaint = false; render();
+  });
+
+  function setBar(kg) {
+    var keep = total();
+    bar = kg;
+    document.getElementById('bar20').setAttribute('aria-pressed', String(kg === 20));
+    document.getElementById('bar15').setAttribute('aria-pressed', String(kg === 15));
+    firstPaint = false;
+    setTotal(keep);
+  }
+  document.getElementById('bar20').addEventListener('click', function () { setBar(20); });
+  document.getElementById('bar15').addEventListener('click', function () { setBar(15); });
+
+  targetEl.addEventListener('input', function () {
+    firstPaint = false;
+    targetVal.textContent = fmt(parseFloat(targetEl.value)) + ' kg';
+    setTotal(parseFloat(targetEl.value));
+  });
+  repsEl.addEventListener('input', renderPct);
+
+  pctBody.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-load]');
+    if (!b) { return; }
+    firstPaint = false;
+    setTotal(parseFloat(b.dataset.load));
+    document.getElementById('bar').scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+  });
+
+  // programs
+  function setOpen(row, on) {
+    var d = row.querySelector('.drawer');
+    var content = d.firstElementChild;
+    row.dataset.open = String(on);
+    row.querySelector('button').setAttribute('aria-expanded', String(on));
+
+    if (REDUCED) { d.style.height = on ? 'auto' : '0px'; return; }
+
+    if (on) {
+      d.style.height = content.offsetHeight + 'px';
+      var settle = function (e) {
+        if (e.propertyName !== 'height') { return; }
+        d.removeEventListener('transitionend', settle);
+        if (row.dataset.open === 'true') { d.style.height = 'auto'; }
+      };
+      d.addEventListener('transitionend', settle);
+    } else {
+      if (d.style.height === 'auto' || d.style.height === '') { d.style.height = content.offsetHeight + 'px'; }
+      void d.offsetHeight;                       // force a reflow so the close actually animates
+      d.style.height = '0px';
+    }
+  }
+  function openOnly(id) {
+    document.querySelectorAll('.row').forEach(function (r) { setOpen(r, r.id === id); });
+  }
+  document.querySelectorAll('.row > button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var r = b.closest('.row');
+      setOpen(r, r.dataset.open !== 'true');
+      document.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
+    });
+  });
+  document.querySelectorAll('.chip').forEach(function (c) {
+    c.addEventListener('click', function () {
+      document.querySelectorAll('.chip').forEach(function (o) { o.setAttribute('aria-pressed', String(o === c)); });
+      openOnly(c.dataset.opens);
+      document.getElementById(c.dataset.opens).scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+    });
+  });
+
+  // copy
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.copy');
+    if (!btn) { return; }
+    var text = btn.getAttribute('data-copy') || '';
+    var done = function (word) {
+      btn.textContent = word;
+      setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+    };
+    var fallback = function () {
+      var span = btn.parentElement && btn.parentElement.querySelector('span');
+      if (!span) { return; }
+      var range = document.createRange();
+      range.selectNodeContents(span);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      done('Selected');
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done('Copied'); }, fallback);
+      } else { fallback(); }
+    } catch (err) { fallback(); }
+  });
+
+  // first paint: remember the viewer's last bar, else load 60 kg on the way in
+  var start = 60, startReps = 5;
+  try {
+    var saved = JSON.parse(localStorage.getItem('fa.bar') || 'null');
+    if (saved && saved.total) { bar = saved.bar === 15 ? 15 : 20; start = saved.total; startReps = saved.reps || 5; }
+  } catch (e) {}
+  document.getElementById('bar20').setAttribute('aria-pressed', String(bar === 20));
+  document.getElementById('bar15').setAttribute('aria-pressed', String(bar === 15));
+  repsEl.value = String(startReps);
+  shownTotal = REDUCED ? start : bar;
+  setTotal(start);
+  firstPaint = false;
+})();
+</script>
